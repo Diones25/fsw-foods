@@ -19,7 +19,7 @@ const ProductImage = ({ product }: ProductImageProps) => {
 
   return (
     <>
-      <div className="relative w-full h-[360px]">
+      <div className="relative w-full h-[420px]">
         <Image
           src={product?.imageUrl}
           alt={product?.name}
@@ -28,7 +28,7 @@ const ProductImage = ({ product }: ProductImageProps) => {
         />
 
         <Button
-          className="absolute top-4 left-4 rounded-full bg-white text-foreground hover:text-white"
+          className="absolute top-4 left-4 rounded-full bg-slate-200 text-foreground hover:text-white"
           size="icon"
           onClick={handleBackClick}
         >
