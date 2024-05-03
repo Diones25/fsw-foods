@@ -21,12 +21,13 @@ const ProductsPage = async ({ params: { id } }: ProductsPageProps) => {
     }
   });
 
-  
-
   const juices = await db.product.findMany({
     where: {
       category: {
         name: product?.category.name 
+      },
+      restaurant: {
+        id: product?.restaurantId
       }
     },
     include: {
