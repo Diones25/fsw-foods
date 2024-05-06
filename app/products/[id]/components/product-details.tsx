@@ -1,12 +1,12 @@
 "use client"
 
+import DeliveryInfo from "@/app/components/delivery-info";
 import DiscountBadge from "@/app/components/discount-badge";
 import ProductList from "@/app/components/product-list";
 import { Button } from "@/app/components/ui/button";
-import { Card } from "@/app/components/ui/card";
 import { calculateProductTotalPrice, formatCurrency } from "@/app/helpers/price";
 import { Prisma } from "@prisma/client";
-import { BikeIcon, ChevronLeftIcon, ChevronRightIcon, TimerIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -89,38 +89,9 @@ const ProductDetails = ({ product, complementaryProducts }: ProductDetailsProps)
             </Button>
           </div>
         </div>
-
-        {/*Dados da entrega*/}
+        
         <div className="px-5">
-          <Card className="flex justify-around py-4 mt-6">
-            {/*Custo*/}
-            <div className="flex flex-col items-center">
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <span className="text-xs">Entrega</span>
-                <BikeIcon size={14} />
-              </div>
-
-              {Number(product.restaurant.deliveryFree) > 0 ? (
-                <p className="text-xs font-semibold">
-                  {formatCurrency(Number(product.restaurant.deliveryFree))}
-                </p>
-              ) : (
-                <p className="text-xs font-semibold">Grátis</p>
-              )}
-            </div>
-
-            {/*Tempo*/}
-            <div className="flex flex-col items-center">
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <span className="text-xs">Entrega</span>
-                <TimerIcon size={14} />
-              </div>
-
-              <p className="text-xs font-semibold">
-                {product.restaurant.deliveryTimeMinutes} min
-              </p>
-            </div>
-          </Card>
+          <DeliveryInfo  restaurant={product.restaurant} />
         </div>
 
         {/*Descrição*/}
