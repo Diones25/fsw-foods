@@ -1,6 +1,5 @@
 import Header from "@/app/components/header";
 import RestaurantItem from "@/app/components/restaurant-item";
-import RestaurantList from "@/app/components/restaurant-list";
 import { db } from "@/app/lib/prisma";
 
 const RecomendedRestaurants = async () => {
