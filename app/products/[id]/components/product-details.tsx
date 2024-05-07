@@ -1,14 +1,17 @@
 "use client"
 
+import Cart from "@/app/components/cart";
 import DeliveryInfo from "@/app/components/delivery-info";
 import DiscountBadge from "@/app/components/discount-badge";
 import ProductList from "@/app/components/product-list";
 import { Button } from "@/app/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/app/components/ui/sheet";
+import { CartContext } from "@/app/contexts/cart";
 import { calculateProductTotalPrice, formatCurrency } from "@/app/helpers/price";
 import { Prisma } from "@prisma/client";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 interface ProductDetailsProps {
   product: Prisma.ProductGetPayload<{
@@ -24,8 +27,15 @@ interface ProductDetailsProps {
 }
 
 const ProductDetails = ({ product, complementaryProducts }: ProductDetailsProps) => {
-  const [quantity, setQuantity] = useState(1);
+  const [ quantity, setQuantity ] = useState(1);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { addProductToCart, products } = useContext(CartContext);
 
+  const handleAddToCartClick = () => {
+    addProductToCart(product, quantity);
+    setIsCartOpen(true);
+  }
+  
   const handleIncreaseQuantityClick = () => {
     setQuantity((currentState => currentState + 1));
   }
@@ -107,9 +117,23 @@ const ProductDetails = ({ product, complementaryProducts }: ProductDetailsProps)
         </div>
 
         <div className="px-5 mt-6">
-          <Button className="w-full font-semibold">Adicionar à sacola</Button>
+          <Button
+            className="w-full font-semibold"
+            onClick={handleAddToCartClick}
+          >
+            Adicionar à sacola
+          </Button>
         </div>
       </div>
+
+      <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>        
+        <SheetContent className="w-[90vw]">
+          <SheetHeader>
+            <SheetTitle className="text-left">Sacola</SheetTitle>
+          </SheetHeader>
+          <Cart />
+        </SheetContent>
+      </Sheet>
     </>
   );
 }
