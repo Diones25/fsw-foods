@@ -73,7 +73,7 @@ const ProductDetails = ({ product, complementaryProducts }: ProductDetailsProps)
               )}
             </div>
             {/*Preço original*/}
-            {product.discountPercentage && (
+            {product.discountPercentage > 0 && (
               <p className="text-muted-foreground text-sm">
                 De: {formatCurrency(Number(product.price))}
               </p>
