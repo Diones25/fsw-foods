@@ -20,7 +20,15 @@ interface IcartContext {
   subtotalPrice: number;
   totalPrice: number;
   totalDiscounts: number;
-  addProductToCart: (product: Product, quantity: number) => void
+  addProductToCart: (product: Prisma.ProductGetPayload<{
+    include: {
+      restaurant: {
+        select: {
+          deliveryFree: true
+        }
+      }
+    }
+  }>, quantity: number) => void
   decreaseProductQuantity: (productId: string) => void
   increaseProductQuantity: (productId: string) => void
   removeProductsFromCart: (productId: string) => void
@@ -93,7 +101,15 @@ export const CartProvider = ({ children }: Props) => {
     )
   }
 
-  const addProductToCart = (product: Product, quantity: number) => {
+  const addProductToCart = (product: Prisma.ProductGetPayload<{
+    include: {
+      restaurant: {
+        select: {
+          deliveryFree: true
+        }
+      }
+    }
+  }>, quantity: number) => {
     //Verificar se o produto já está no carrinho
     const isProductAlreadyOnCart = products.some(cartProduct => cartProduct.id === product.id)
     
