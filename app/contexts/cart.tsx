@@ -1,20 +1,30 @@
 "use client"
 
-import { Product } from "@prisma/client";
-import { ReactNode, createContext, useState } from "react";
+import { Prisma, Product } from "@prisma/client";
+import { ReactNode, createContext, useMemo, useState } from "react";
+import { calculateProductTotalPrice } from "../helpers/price";
 
-export interface CartProduct extends Product {
+export interface CartProduct extends Prisma.ProductGetPayload<{
+  include: {
+    restaurant: {
+      select: {
+      deliveryFree: true
+    }
+  }
+}}> {
   quantity: number;
 }
 
 interface IcartContext {
   products: CartProduct[];
+  subtotalPrice: number;
+  totalPrice: number;
+  totalDiscounts: number;
   addProductToCart: (product: Product, quantity: number) => void
   decreaseProductQuantity: (productId: string) => void
   increaseProductQuantity: (productId: string) => void
   removeProductsFromCart: (productId: string) => void
 }
-
 
 interface Props {
   children: ReactNode
@@ -22,6 +32,9 @@ interface Props {
 
 export const CartContext = createContext<IcartContext>({
   products: [],
+  subtotalPrice: 0,
+  totalPrice: 0,
+  totalDiscounts: 0,
   addProductToCart: () => {},
   decreaseProductQuantity: () => {},
   increaseProductQuantity: () => {},
@@ -30,6 +43,20 @@ export const CartContext = createContext<IcartContext>({
 
 export const CartProvider = ({ children }: Props) => {
   const [products, setProducts] = useState<CartProduct[]>([]);
+
+  const subtotalPrice = useMemo(() => {
+    return products.reduce((acc, product) => {
+      return acc + Number(product.price) * product.quantity;
+    }, 0)
+  }, [products])
+
+  const totalPrice = useMemo(() => {
+    return products.reduce((acc, product) => {
+      return acc + calculateProductTotalPrice(product) * product.quantity;
+    }, 0)
+  }, [products]);
+
+  const totalDiscounts = subtotalPrice - totalPrice;
 
   const decreaseProductQuantity = (productId: string) => {
     return setProducts((prev) =>
@@ -94,7 +121,17 @@ export const CartProvider = ({ children }: Props) => {
   }
 
   return (
-    <CartContext.Provider value={{ products, addProductToCart, decreaseProductQuantity, increaseProductQuantity, removeProductsFromCart }}>
+    <CartContext.Provider
+      value={{
+        products,
+        subtotalPrice,
+        totalPrice,
+        totalDiscounts,
+        addProductToCart,
+        decreaseProductQuantity,
+        increaseProductQuantity,
+        removeProductsFromCart
+      }}>
       {children}
     </CartContext.Provider>
   )
